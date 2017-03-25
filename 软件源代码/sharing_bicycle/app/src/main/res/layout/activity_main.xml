@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.project.liwenbin.sharing_bicycle.MainActivity">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:id="@+id/buttom"
+        android:background="@drawable/buttum"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:id="@+id/imageButton"
+        android:background="@drawable/using_bicycle"
+        android:layout_alignTop="@+id/buttom"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="37dp" />
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/my"
+        android:background="@drawable/me"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="40dp"
+         />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:id="@+id/splitimage"
+        android:background="@drawable/split"
+        android:layout_toRightOf="@id/my"
+        android:layout_marginLeft="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+
+         />
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/book"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/splitimage"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="32dp"
+        android:background="@drawable/book"
+         />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:id="@+id/splitimage2"
+        android:background="@drawable/split"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@+id/book"
+        android:layout_marginLeft="32dp"/>
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/report"
+        android:background="@drawable/report"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_toRightOf="@+id/splitimage2"
+        android:layout_marginLeft="40dp"/>
+
+</RelativeLayout>
