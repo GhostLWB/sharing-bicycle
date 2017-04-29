@@ -2,22 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#26c0ff">
+    >
 
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/bmapView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true"
-         />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="to 登录"
         android:id="@+id/button1"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="159dip" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -25,8 +19,7 @@
         android:text="to 注册"
         android:id="@+id/button2"
         android:layout_below="@+id/button1"
-        android:layout_alignStart="@+id/button1"
-        android:layout_marginTop="55dip" />
+        android:layout_alignParentStart="true" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -36,34 +29,27 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
-    <ImageButton
-        android:layout_width="140dip"
+    <Button
+        android:layout_width="100dip"
         android:layout_height="40dip"
         android:id="@+id/unlockButton"
         android:background="@drawable/quit"
         android:layout_alignTop="@+id/imageView2"
         android:layout_marginTop="40dip"
+        android:text="我要用车"
+        android:textColor="#26c0ff"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="我要用车"
-        android:textSize="15sp"
-        android:textColor="#26c0ff"
-        android:id="@+id/textView3"
-        android:layout_alignTop="@+id/unlockButton"
-        android:layout_marginTop="12dip"
-        android:layout_centerHorizontal="true" />
+
 
         <ImageButton
             android:layout_width="60dip"
             android:layout_height="60dip"
             android:background="@drawable/navigate"
-
             android:id="@+id/navigateButton"
-            android:layout_alignTop="@+id/BookButton"
-            android:layout_toStartOf="@+id/unlockButton" />
+            android:layout_alignTop="@+id/preorderButton"
+            android:layout_toStartOf="@+id/unlockButton"
+            android:layout_marginEnd="38dip" />
 
         <ImageView
             android:layout_width="1dip"
@@ -71,14 +57,14 @@
             android:background="@drawable/split"
             android:id="@+id/imageView3"
             android:layout_alignTop="@+id/imageView4"
-            android:layout_alignLeft="@+id/BookButton"
+            android:layout_alignLeft="@+id/preorderButton"
             android:layout_marginLeft="78dip"/>
 
         <ImageButton
             android:layout_width="60dip"
             android:layout_height="60dip"
             android:background="@drawable/book"
-            android:id="@+id/BookButton"
+            android:id="@+id/preorderButton"
             android:layout_below="@+id/unlockButton"
             android:layout_marginTop="10dip"
             android:layout_centerHorizontal="true" />
@@ -90,7 +76,7 @@
             android:id="@+id/imageView4"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="15dip"
-            android:layout_alignRight="@+id/BookButton"
+            android:layout_alignRight="@+id/preorderButton"
             android:layout_marginRight="78dip"/>
 
         <ImageButton
@@ -98,16 +84,16 @@
             android:layout_height="60dip"
             android:background="@drawable/report"
             android:id="@+id/reportButton"
-            android:layout_alignTop="@+id/BookButton"
-            android:layout_toEndOf="@+id/unlockButton" />
+            android:layout_alignTop="@+id/preorderButton"
+            android:layout_toEndOf="@+id/imageView3"
+            android:layout_marginStart="38dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
-        android:layout_below="@+id/button2"
-        android:layout_alignEnd="@+id/imageView3"
-        android:layout_marginTop="62dp" />
+        android:text="点击定位"
+        android:id="@+id/locatebutton"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/button2" />
 
 </RelativeLayout>

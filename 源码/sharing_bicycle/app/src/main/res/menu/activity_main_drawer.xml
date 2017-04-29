@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+    <item android:title="个人信息" >
+        <menu>
+            <item
+                android:id="@+id/wallet"
+                android:icon="@drawable/wallet"
+                android:title="我的钱包" />
+            <item
+                android:id="@+id/credit"
+                android:icon="@drawable/credit"
+                android:title="我的积分" />
+        </menu>
+    </item>
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item android:title="行程管理">
+            <menu>
+                <item
+                    android:id="@+id/trip"
+                    android:icon="@drawable/trip_manage"
+                    android:title="行程统计" />
+                <item
+                    android:id="@+id/report"
+                    android:icon="@drawable/navigate_group2"
+                    android:title="车辆报修" />
+            </menu>
+        </item>
+    </group>
+<group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/log_out"
+                    android:icon="@drawable/log_out"
+                    android:title="退出登录"/>
+</group>
+
+
+</menu>
