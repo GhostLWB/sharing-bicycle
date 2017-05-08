@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/bmapView_navigate"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="160dip"
+        android:id="@+id/imageView6"
+        android:background="@drawable/buttum"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/navigate_addr"
+        android:layout_above="@+id/navigation_start"
+        android:layout_marginBottom="12dip"
+        android:layout_alignStart="@+id/navigation_start"
+        android:layout_alignEnd="@+id/navigation_clear" />
+
+    <Button
+        android:layout_width="100dip"
+        android:layout_height="40dip"
+        android:text="开始导航"
+        android:textColor="#26c0ff"
+        android:background="@drawable/quit"
+        android:id="@+id/navigation_start"
+        android:layout_marginStart="64dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="26dp" />
+
+    <Button
+        android:layout_width="100dip"
+        android:layout_height="40dip"
+        android:text="清除路线"
+        android:background="@drawable/submit"
+        android:id="@+id/navigation_clear"
+        android:layout_alignTop="@+id/navigation_start"
+        android:layout_toEndOf="@+id/navigation_start"
+        android:layout_marginStart="53dp" />
+
+
+
+</RelativeLayout>

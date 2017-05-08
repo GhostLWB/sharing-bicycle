@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#26c0ff">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="500dip"
+        android:background="@drawable/perorder_background"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView9" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="160dip"
+        android:id="@+id/imageView7"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/preorder_buttum"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="320dip"
+        android:layout_height="330dip"
+        android:id="@+id/imageView8"
+        android:background="@drawable/preorder_board"
+        android:layout_above="@+id/imageView7"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="44dp" />
+
+    <Button
+        android:layout_width="200dip"
+        android:layout_height="45dip"
+        android:text="确认预约"
+        android:textSize="18sp"
+        android:textColor="#ffffff"
+        android:id="@+id/confirm_preorder"
+        android:background="@drawable/quit_login"
+        android:layout_alignBottom="@+id/imageView8"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="60dip"
+        android:layout_height="50dip"
+        android:id="@+id/preorder_back_button"
+        android:background="#00000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+    <ImageView
+        android:layout_width="26dip"
+        android:layout_height="20dip"
+        android:id="@+id/login_back_image"
+        android:background="@drawable/back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="15dip"
+        android:layout_marginStart="15dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确认预约"
+        android:textSize="23dip"
+        android:id="@+id/textView4"
+        android:textColor="#ffffff"
+        android:layout_alignBottom="@+id/preorder_back_button"
+        android:layout_marginBottom="8dip"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="车编号"
+        android:id="@+id/textView5"
+        android:textColor="#26c0ff"
+        android:textSize="22sp"
+        android:layout_alignTop="@+id/imageView9"
+        android:layout_marginStart="5dip"
+        android:layout_marginTop="20dip"
+        android:layout_toEndOf="@+id/preorder_back_button" />
+
+    <ImageView
+        android:layout_width="120dip"
+        android:layout_height="36dip"
+        android:id="@+id/imageView10"
+        android:background="@drawable/preorder_textboard"
+        android:layout_alignBottom="@+id/textView5"
+        android:layout_alignEnd="@+id/confirm_preorder" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="20sp"
+        android:id="@+id/preorder_bike_id"
+        android:textColor="#fc4e9a"
+        android:layout_alignTop="@+id/imageView10"
+        android:layout_marginTop="6dip"
+        android:layout_alignStart="@+id/imageView10"
+        android:layout_marginStart="60dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="从"
+        android:textColor="#26c0ff"
+        android:textSize="22sp"
+        android:id="@+id/textView6"
+        android:layout_marginTop="37dp"
+        android:layout_below="@+id/textView5"
+        android:layout_alignEnd="@+id/textView5" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="到"
+        android:textColor="#26c0ff"
+        android:textSize="22sp"
+        android:id="@+id/textView7"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/textView6" />
+
+    <ImageView
+        android:layout_width="120dip"
+        android:layout_height="36dip"
+        android:id="@+id/imageView11"
+        android:background="@drawable/preorder_textboard"
+        android:layout_alignBottom="@+id/textView6"
+        android:layout_alignStart="@+id/imageView10" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00000"
+        android:textSize="20sp"
+        android:textColor="#fc4e9a"
+        android:id="@+id/preorder_time_from"
+        android:layout_alignTop="@+id/imageView11"
+        android:layout_alignStart="@+id/imageView11"
+        android:layout_marginTop="6dip"
+        android:layout_marginStart="40dip"/>
+
+    <ImageView
+        android:layout_width="120dip"
+        android:layout_height="36dip"
+        android:id="@+id/imageView12"
+        android:layout_centerVertical="true"
+        android:background="@drawable/preorder_textboard"
+        android:layout_alignStart="@+id/imageView11" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00000"
+        android:textSize="20sp"
+        android:textColor="#fc4e9a"
+        android:id="@+id/preorder_time_to"
+        android:layout_alignTop="@+id/imageView12"
+        android:layout_alignStart="@+id/imageView12"
+        android:layout_marginTop="6dip"
+        android:layout_marginStart="40dip"/>
+</RelativeLayout>
