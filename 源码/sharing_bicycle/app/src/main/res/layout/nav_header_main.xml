@@ -17,8 +17,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1355***1335"
-        android:id="@+id/accountText"
+        android:text="请登录"
+        android:id="@+id/user_acccount"
         android:textColor="#ffffff"
         android:textSize="15sp"
         android:layout_marginBottom="56dp"
@@ -30,7 +30,7 @@
         android:layout_height="100dip"
         android:id="@+id/imageView5"
         android:background="@drawable/image"
-        android:layout_above="@+id/accountText"
+        android:layout_above="@+id/user_acccount"
         android:layout_marginBottom="15dip"
         android:layout_centerHorizontal="true" />
 

@@ -1,13 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff">
-    <lecho.lib.hellocharts.view.LineChartView
-        android:id="@+id/chart"
+    android:background="#26c0ff">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="#32CD32"
-        >
-    </lecho.lib.hellocharts.view.LineChartView>
-</LinearLayout>
+        android:layout_height="500dip"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+
+
+        <android.support.design.widget.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/chart_tab"
+            android:background="#26c0ff"
+            app:tabIndicatorColor="#ffffff"
+            app:tabTextColor="#ffffff"
+            app:tabSelectedTextColor="#fc4e9a"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/chart_pager"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
+    <ImageView
+        android:layout_width="35dip"
+        android:layout_height="26dip"
+        android:id="@+id/login_back_image"
+        android:background="@drawable/back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dip"
+        android:layout_marginStart="12dip"/>
+
+    <ImageButton
+        android:layout_width="60dip"
+        android:layout_height="50dip"
+        android:id="@+id/analysis_back_button"
+        android:background="#00000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="行程统计"
+        android:textSize="23dip"
+        android:textColor="#ffffff"
+        android:id="@+id/textView8"
+        android:layout_alignBottom="@+id/analysis_back_button"
+        android:layout_marginBottom="8dip"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
+
+</RelativeLayout>
+
+</FrameLayout>
