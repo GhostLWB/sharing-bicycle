@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.project.liwenbin.sharing_bicycle">
+
     <!-- 百度API所需权限 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- 这个权限用于进行网络定位-->
@@ -27,17 +29,20 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
-
+        <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="25" />
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="q6LFOUiBxNwO0ud9V2inkOzFFRGoDGkQ" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="standard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,12 +50,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".Register"></activity>
+        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".ChartActivity"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar" ></activity>
+        <activity android:name=".NavigateActivity"></activity>
+        <activity android:name=".PreorderActivity"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:launchMode="standard"></activity>
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+            android:process=":remote" >
+        </service>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
