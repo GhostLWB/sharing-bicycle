@@ -37,8 +37,7 @@ public class User_register_servlet extends HttpServlet {
 		int res=0;
 		String sql1="select * from user_passwd where id = ?";
 		//初始化wallet和credit
-		String sql2="INSERT into wallet VALUES(?,?)";
-		String sql3="INSERT into credit VALUES(?,?)";
+		String sql_userinfo ="INSERT into user_info(id,balance,total_credit,in_use,in_preorder) VALUES (?,?,?,?,?)";
 		try {
 
 			connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
@@ -49,8 +48,7 @@ public class User_register_servlet extends HttpServlet {
 				hav_register=false;
 				res=queryRunner.update(connection, sql, username,password);
 				//wallet 初始化 设置值为100
-				queryRunner.update(connection,sql2,username,100);
-				queryRunner.update(connection,sql3,username,100);
+				queryRunner.update(connection,sql_userinfo,username,100,100,false,false);
 				
 			}
 			connection.commit();

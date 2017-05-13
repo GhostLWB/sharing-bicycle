@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
@@ -20,29 +20,41 @@ import org.apache.commons.dbutils.handlers.MapListHandler;
 import com.connection.Class_con;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 /*
- * @宋羽珩
- * 2017/5/10
- * 用于返回所有车辆信息  客户端
+ * @author 宋羽珩
+ * 2017/5/5
+ * 用于返回指定车辆信息bike端
+ * 
  */
-
-public class Bike_full_data_servlet extends HttpServlet {
+public class Get_single_bike_servlet extends HttpServlet {
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		//设置编码格式，获取数据库连接
+		boolean result_code = false;
+		JSONObject json = new JSONObject();
 		req.setCharacterEncoding("utf-8");
 		resp.setContentType("text/html;charset=utf-8");
-		PrintWriter out = resp.getWriter();
-		Connection connection =Class_con.getConnect();
+		PrintWriter out =resp.getWriter();
+		Connection connection= Class_con.getConnect();
+		
+		//获取参数，执行sql语句
+		String bike_id = req.getParameter("bike_id");
+		String sql="select in_use,break_down,description,in_order,in_lock from bike where bike_id=?";
 		QueryRunner queryRunner = new QueryRunner();
-		List<Map<String, Object>> re=null;
-		String sql ="SELECT bike_id,in_use,break_down,in_lock,in_order,GPS,id_preorder FROM bike";
 		try {
-			 re = queryRunner.query(connection, sql, new MapListHandler());
+			List<Map<String, Object>> re = queryRunner.query(connection, sql, new MapListHandler(), bike_id);
+			//返回结果处理
+			if(re.size()==1){
+				result_code = true;
+				json.putAll(re.get(0));
+				json.put("code", result_code);
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result_code=false;
+			json.put("code", result_code);
 		}
 		try {
 			connection.close();
@@ -50,14 +62,8 @@ public class Bike_full_data_servlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		JSONArray json = new JSONArray();
-		for(int i = 0 ;i<re.size();i++)
-		{
-			json.add(re.get(i));
-		}
+		//返回结果
 		out.print(json.toString());
-
 	}
-	
 
 }

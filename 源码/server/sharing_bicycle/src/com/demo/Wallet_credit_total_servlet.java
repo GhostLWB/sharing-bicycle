@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -14,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.json.JSONObject;
 
 import com.connection.Class_con;
 import com.sun.org.apache.bcel.internal.generic.NEW;
+
 
 public class Wallet_credit_total_servlet extends HttpServlet {
 
@@ -34,28 +37,20 @@ public class Wallet_credit_total_servlet extends HttpServlet {
 		//获取连接
 		Connection connection = Class_con.getConnect();
 		//要使用的SQL 语句  wallet credit
-		String sql1 = "select total_credit from credit where id = ?";
-		String sql2 = "select balance from wallet where id = ?";
+		String sql1 = "select total_credit,balance from user_info where id = ?";
 		QueryRunner queryRunner =new QueryRunner();
 		try {
-			Map<String, Object> creditMap = queryRunner.query(connection, sql1, new MapHandler(), id);
-			Map<String, Object>	balanceMap = queryRunner.query(connection, sql2, new MapHandler(), id);
-			if(creditMap ==null || creditMap.size()<1)
+			Map<String, Object> resultMap = queryRunner.query(connection, sql1,new MapHandler(),id);
+			
+			//判断返回值
+			if(resultMap==null||resultMap.size()<1)
 			{
-				credit = "fail";
-			}
-			else
-			{
-				credit = creditMap.get("total_credit").toString();
-			}
-			if(balanceMap ==null || balanceMap.size()<1)
-			{
-				balance = "fail";
+				credit="fail";
+				balance="fail";
 			}
 			else {
-
-				
-				balance = balanceMap.get("balance").toString();
+				balance=resultMap.get("balance").toString();
+				credit=resultMap.get("total_credit").toString();
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -68,8 +63,12 @@ public class Wallet_credit_total_servlet extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		out.println(credit);
-		out.println(balance);
+		Map<String,String> map =new HashMap<String, String>();
+		map.put("credit", credit);
+		map.put("balance", balance);
+		JSONObject jsonObject =new JSONObject(map);
+		out.write(jsonObject.toString());
+		out.flush();
 		
 	}
 

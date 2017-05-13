@@ -26,7 +26,7 @@
   </servlet-mapping>
   <servlet>
   
-    <!-- User_register_servlet mapping  register.do -->
+  <!-- User_register_servlet mapping  register.do -->
   <servlet-name>user_register</servlet-name>
   <servlet-class>com.demo.User_register_servlet</servlet-class>
   </servlet>
@@ -55,6 +55,53 @@
   <url-pattern>/wallet_credit.do</url-pattern>
   </servlet-mapping>
   
-
-
+  <!-- Bike_modify mapping -->
+  <servlet>
+  <servlet-name>Bike_modify</servlet-name>
+  <servlet-class>com.demo.Bike_modify_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Bike_modify</servlet-name>
+  <url-pattern>/bike_modify.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Get_single_bike mapping -->
+  <servlet>
+  <servlet-name>Get_single_bike</servlet-name>
+  <servlet-class>com.demo.Get_single_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Get_single_bike</servlet-name>
+  <url-pattern>/single_bike.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Preorder_bike mapping -->
+  <servlet>
+  <servlet-name>Preorder_bike</servlet-name>
+  <servlet-class>com.demo.Preorder_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Preorder_bike</servlet-name>
+  <url-pattern>/preorder.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Finish_preorder mapping -->
+  <servlet>
+  <servlet-name>Finish_preorder</servlet-name>
+  <servlet-class>com.demo.Finish_preorder_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Finish_preorder</servlet-name>
+  <url-pattern>/finish_preorder.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Use_bike mapping -->
+  <servlet>
+  <servlet-name>Use_bike</servlet-name>
+  <servlet-class>com.demo.Use_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Use_bike</servlet-name>
+  <url-pattern>/use_bike.do</url-pattern>
+  </servlet-mapping>
 </web-app>
