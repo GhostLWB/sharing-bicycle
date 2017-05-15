@@ -55,7 +55,7 @@ public class Use_bike_servlet extends HttpServlet {
 		}
 		//定义sql语句
 		String sql ="select in_use,in_preorder,bike_id FROM user_info where id=?";
-		String sql0="select in_use,in_order from bike where bike_id=?";
+		String sql0="select in_use,in_order,break_down from bike where bike_id=?";
 		String sql1="UPDATE user_info SET in_use=TRUE where id =?";
 		String sql2="UPDATE bike SET in_use=TRUE,in_lock=FALSE WHERE bike_id=?";
 		String sql3="UPDATE user_info set in_preorder=FALSE,bike_id=NULL,in_use=TRUE WHERE id=?";
@@ -89,6 +89,10 @@ public class Use_bike_servlet extends HttpServlet {
 					else if((Boolean)bike_result.get("in_use")==true){
 						flag=false;
 						reason="车辆被使用";
+					}
+					else if ((Boolean)bike_result.get("break_down")==true) {
+						flag=false;
+						reason="车辆故障";
 					}
 					else {
 						try {
