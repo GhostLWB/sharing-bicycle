@@ -73,7 +73,11 @@ public class Finish_use_servlet extends HttpServlet {
 			queryRunner.update(connection, sql2, balance,credit,user_id);
 			queryRunner.update(connection, sql3, user_id,bike_id,riding_time);
 			queryRunner.update(connection, sql4, user_id,balance_change);
+<<<<<<< HEAD
 			queryRunner.update(connection,sql5,user_id,credit_change,"1");
+=======
+			queryRunner.update(connection,sql5,user_id,credit_change,"ÆïÐÐ½±Àø");
+>>>>>>> origin/SYH
 			connection.commit();
 		} catch (SQLException e) {
 			System.out.println(e.toString());
