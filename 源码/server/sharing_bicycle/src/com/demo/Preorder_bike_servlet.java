@@ -134,6 +134,8 @@ public class Preorder_bike_servlet extends HttpServlet {
 			flag=false;
 			json.put("flag", flag);
 			json.putAll(map);
+			json.put("user_in_preorder", user_preorder);
+			json.put("user_in_use", user_in_use);
 		}
 		try {
 			connection.close();

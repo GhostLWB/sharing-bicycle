@@ -104,4 +104,54 @@
   <servlet-name>Use_bike</servlet-name>
   <url-pattern>/use_bike.do</url-pattern>
   </servlet-mapping>
+  
+  <!-- Finish_use mapping -->
+  <servlet>
+  <servlet-name>Finish_use</servlet-name>
+  <servlet-class>com.demo.Finish_use_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Finish_use</servlet-name>
+  <url-pattern>/finish_use.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Fault_report mapping -->
+  <servlet>
+  <servlet-name>Fault_report</servlet-name>
+  <servlet-class>com.demo.Fault_report_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Fault_report</servlet-name>
+  <url-pattern>/report.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Credit_record mapping -->
+  <servlet>
+  <servlet-name>Credit_record</servlet-name>
+  <servlet-class>com.demo.Credit_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Credit_record</servlet-name>
+  <url-pattern>/credit_record.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Cycling_record mapping -->
+  <servlet>
+  <servlet-name>Cycling_record</servlet-name>
+  <servlet-class>com.demo.Cycling_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Cycling_record</servlet-name>
+  <url-pattern>/cycling_record.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Wallet_record mapping -->
+  <servlet>
+  <servlet-name>Wallet_record</servlet-name>
+  <servlet-class>com.demo.Wallet_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Wallet_record</servlet-name>
+  <url-pattern>/wallet_record.do</url-pattern>
+  </servlet-mapping>
 </web-app>
