@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="melibrary.com.genuitec.eclipse.j2eedt.core.MYECLIPSE_JAVAEE_6_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/mysql-connector-java-5.1.41/mysql-connector-java-5.1.41-bin.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/commons-dbutils-1.6-bin/commons-dbutils-1.6/commons-dbutils-1.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/JSON/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/json.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/commons-beanutils-1.9.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/commons-httpclient-4.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="C:/Users/宋羽珩/Desktop/Software practice/json使用依赖包/jsonlib/JSONlib/morph-1.1.1.jar"/>
+	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
+</classpath>
