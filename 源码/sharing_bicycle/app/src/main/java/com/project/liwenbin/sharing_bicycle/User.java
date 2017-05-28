@@ -6,8 +6,10 @@ package com.project.liwenbin.sharing_bicycle;
 public class User  {
     String account=null;
     String haveBicycleID=null;
+    String sex;
     double balance;
     double credit;
+
     private static User user;
     private User(){
     }
@@ -40,6 +42,14 @@ public class User  {
 
     public void setCredit(double credit) {
         this.credit = credit;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 
     public String getHaveBicycleID() {

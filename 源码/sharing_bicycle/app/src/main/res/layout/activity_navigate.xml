@@ -26,7 +26,7 @@
     <Button
         android:layout_width="100dip"
         android:layout_height="40dip"
-        android:text="开始导航"
+        android:text="@string/navigate_start_navi_button"
         android:textColor="#26c0ff"
         android:background="@drawable/quit"
         android:id="@+id/navigation_start"
@@ -38,7 +38,7 @@
     <Button
         android:layout_width="100dip"
         android:layout_height="40dip"
-        android:text="清除路线"
+        android:text="@string/navi_clear_button"
         android:background="@drawable/submit"
         android:id="@+id/navigation_clear"
         android:layout_alignTop="@+id/navigation_start"

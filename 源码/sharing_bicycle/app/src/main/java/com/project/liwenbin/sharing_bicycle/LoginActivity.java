@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +28,11 @@ import com.android.volley.toolbox.Volley;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,6 +53,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private Animation scrollBackgroundAnimation;
     private Button registerButton;
     private User user;
+    private Handler Loginhandler;
     double[] userWalletAndCredit = {0.0, 0.0};
 
     @Override
@@ -80,6 +86,59 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         login_button.setOnClickListener(this);
         backButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
+        //定义handler
+        Loginhandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case 1:
+                        String result =(String)msg.obj;
+                        net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(result);
+                        /**
+                         * 可以通过相应的key对返回的JSON对象进行解析，获取对象中封装的值
+                         */
+                        boolean flag = js.getBoolean("flag");
+                        if (flag == true) {
+
+                            /**
+                             * 在这里是验证通过之后的代码
+                             */
+                            circularProgressView.setVisibility(View.INVISIBLE);
+                            account = input_account.getText().toString();
+                            password = input_password.getText().toString();
+
+                            Intent intent = new Intent(context, MainActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("account", account);
+                            bundle.putString("password", password);
+                            intent.putExtras(bundle);
+
+                            /**
+                             * 生成用户对象
+                             */
+                            user=User.getUser();
+                            user.setAccount(account);
+                            userWalletAndCredit[0]=0.0;
+                            userWalletAndCredit[1]=0.0;
+                            Log.d("LoginActivity","1.user's balance get from userWalletAndCredit is"+userWalletAndCredit[0]);
+
+                            Toast.makeText(context, "欢迎您,"+user.getAccount(), Toast.LENGTH_SHORT).show();
+                            /**
+                             * 页面跳转
+                             */
+                            startActivity(intent);
+                            finish();
+
+                        } else {
+                            Toast.makeText(context, "用户名或者密码错误或账号不存在！", Toast.LENGTH_SHORT).show();
+                            circularProgressView.setVisibility(View.INVISIBLE);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
 
     }
 
@@ -158,6 +217,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         scrollBackgroundAnimation.cancel();
+        ReleaseImageViewUtils.releaseImage(scrollBackground);
         ImageViewUtils.releaseImageViewResouce(scrollBackground);
     }
 
@@ -185,100 +245,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 if (input_account.length()==11) {
                     circularProgressView.setVisibility(View.VISIBLE);
                     //mask.setVisibility(View.VISIBLE);
-                    login_button.setEnabled(false);
+
                     startAnimationThreadStuff(0);
 
                     circularProgressView.setIndeterminate(true);
                     String url = "http://123.206.80.243:8080/sharing_bicycle/user.do";
-                    RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-                    StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                        /**
-                         * 接收服务器返回的信息 s
-                         *
-                         * @param s
-                         */
-                        @Override
-                        public void onResponse(String s) {
-                            net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(s);
-                            /**
-                             * 可以通过相应的key对返回的JSON对象进行解析，获取对象中封装的值
-                             */
-                            boolean flag = js.getBoolean("flag");
-
-                            if (flag == true) {
-
-                                /**
-                                 * 在这里是验证通过之后的代码
-                                 */
-                                account = input_account.getText().toString();
-                                password = input_password.getText().toString();
-
-                                Intent intent = new Intent(context, MainActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("account", account);
-                                bundle.putString("password", password);
-                                intent.putExtras(bundle);
-
-                                /**
-                                 * 生成用户对象
-                                 */
-                                user=User.getUser();
-                                user.setAccount(account);
-                                userWalletAndCredit[0]=0.0;
-                                userWalletAndCredit[1]=0.0;
-                                Log.d("LoginActivity","1.user's balance get from userWalletAndCredit is"+userWalletAndCredit[0]);
-                                /**
-                                 * 查询结果会有一些时间的延迟，需要处理一下
-                                 */
-
-                                userWalletAndCredit=queryUserWalletAndCredit(user.getAccount());
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        user.setBalance(userWalletAndCredit[0]);
-                                        user.setCredit(userWalletAndCredit[1]);
-                                        Log.d("LoginActivity","user's balance get from user instance is"+user.getBalance());
-
-                                        Log.d("LoginActivity","2.user's balance get from userWalletAndCredit is"+userWalletAndCredit[0]);
-                                    }
-                                },500);
-
-                                Toast.makeText(context, "欢迎您,"+user.getAccount(), Toast.LENGTH_SHORT).show();
-                                /**
-                                 * 页面跳转
-                                 */
-                                startActivity(intent);
-
-                            } else {
-                                Toast.makeText(context, "用户名或者密码错误！", Toast.LENGTH_SHORT).show();
-                                circularProgressView.setVisibility(View.INVISIBLE);
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                        /**
-                         * 请求数据失败
-                         *
-                         * @param volleyError
-                         */
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            circularProgressView.setVisibility(View.INVISIBLE);
-                            // mask.setVisibility(View.INVISIBLE);
-                            Toast.makeText(context, "网络故障", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                            //new StringRequest的方法体
-                    {
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> map = new HashMap<String, String>();
-                            map.put("id", input_account.getText().toString());
-                            map.put("password", input_password.getText().toString());
-                            return map;
-                        }
-                    };
-                    mQueue.add(stringRequest);
+                    List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+                    params.add(new BasicNameValuePair("id", input_account.getText().toString()));
+                    params.add(new BasicNameValuePair("password", input_password.getText().toString()));
+                    NetUtils.postRequest(url,params,Loginhandler);
                 }else
                 {
                     Toast.makeText(context,"账户格式错误！",Toast.LENGTH_SHORT).show();
@@ -289,140 +264,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(context,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
-//
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()){
-//            case R.id.login_Button:
-//                if (input_account.length()==11) {
-//                    circularProgressView.setVisibility(View.VISIBLE);
-//                    //mask.setVisibility(View.VISIBLE);
-//                    login_button.setEnabled(false);
-//                    startAnimationThreadStuff(0);
-//
-//                    circularProgressView.setIndeterminate(true);
-//                    String url = "http://123.206.80.243:8080/sharing_bicycle/user.do";
-//                    RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-//                    StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-//                        /**
-//                         * 接收服务器返回的信息 s
-//                         *
-//                         * @param s
-//                         */
-//                        @Override
-//                        public void onResponse(String s) {
-//                            net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(s);
-//                            /**
-//                             * 可以通过相应的key对返回的JSON对象进行解析，获取对象中封装的值
-//                             */
-//                            boolean flag = js.getBoolean("flag");
-//
-//                            if (flag == true) {
-//
-//                                /**
-//                                 * 在这里是验证通过之后的代码
-//                                 */
-//                                account = input_account.getText().toString();
-//                                password = input_password.getText().toString();
-//
-//                                Intent intent = new Intent(context, MainActivity.class);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putString("account", account);
-//                                bundle.putString("password", password);
-//                                intent.putExtras(bundle);
-//
-//
-//                                /**
-//                                 * 页面跳转
-//                                 */
-//                               // startActivity(intent);
-//
-//                            } else {
-//                                Toast.makeText(context, "用户名或者密码错误！", Toast.LENGTH_SHORT).show();
-//                                circularProgressView.setVisibility(View.INVISIBLE);
-//                            }
-//                        }
-//                    }, new Response.ErrorListener() {
-//                        /**
-//                         * 请求数据失败
-//                         *
-//                         * @param volleyError
-//                         */
-//                        @Override
-//                        public void onErrorResponse(VolleyError volleyError) {
-//                            circularProgressView.setVisibility(View.INVISIBLE);
-//                            // mask.setVisibility(View.INVISIBLE);
-//                            Toast.makeText(context, "网络故障", Toast.LENGTH_SHORT).show();
-//                        }
-//                    })
-//                            //new StringRequest的方法体
-//                    {
-//                        @Override
-//                        protected Map<String, String> getParams() throws AuthFailureError {
-//                            Map<String, String> map = new HashMap<String, String>();
-//                            map.put("id", input_account.getText().toString());
-//                            map.put("password", input_password.getText().toString());
-//                            return map;
-//                        }
-//                    };
-//                    mQueue.add(stringRequest);
-//                }else
-//                {
-//                    Toast.makeText(context,"账户格式错误！",Toast.LENGTH_SHORT).show();
-//                }
-//                /**
-//                 * 生成用户对象
-//                 */
-//                    user=User.getUser();
-//                    user.setLogin(true);
-//                    user.setAccount(account);
-//                    userWalletAndCredit[0]=0.0;
-//                    userWalletAndCredit[1]=0.0;
-//                    Log.d("LoginActivity","1.user's balance get from userWalletAndCredit is"+userWalletAndCredit[0]);
-//                    /**
-//                     * 查询结果会有一些时间的延迟，需要处理一下
-//                     */
-//    //                                while(userWalletAndCredit[0]==0.0){
-//    //
-//    //
-//    //                                }
-//                    userWalletAndCredit=queryUserWalletAndCredit(user.getAccount());
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            user.setBalance(userWalletAndCredit[0]);
-//                            user.setCredit(userWalletAndCredit[1]);
-//                            Log.d("LoginActivity","user's balance get from user instance is"+user.getBalance());
-//
-//                            Log.d("LoginActivity","2.user's balance get from userWalletAndCredit is"+userWalletAndCredit[0]);
-//                        }
-//                    },500);
-//
-//                    Toast.makeText(context, "欢迎您,"+user.getAccount(), Toast.LENGTH_SHORT).show();
-//                break;
-//
-//
-//            case R.id.regisertButton:
-//                account=input_account.getText().toString();
-//                Intent intent=new Intent(context,RegisterActivity.class);
-//                Log.d("LoginActivity","input text is "+account);
-//                if ((account!=null)) {
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("account_from_login", account);
-//                    intent.putExtras(bundle);
-//                }
-//                startActivity(intent);
-//                finish();
-//                break;
-//            case R.id.login_back:
-//                Intent back_intent=new Intent(context,MainActivity.class);
-//                //startActivity(back_intent);
-//                finish();
-//                break;
-//        }
-//    }
-//
-//}
-//

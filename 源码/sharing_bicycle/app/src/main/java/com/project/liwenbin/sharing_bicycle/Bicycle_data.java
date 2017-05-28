@@ -1,5 +1,7 @@
 package com.project.liwenbin.sharing_bicycle;
 
+import android.os.Handler;
+import android.os.Message;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -37,6 +39,34 @@ public class Bicycle_data {
 
         }
         return bike_vector;
+    }
+    public static Bicycle findBicycleById(String bike_id){
+        Bicycle bike=null;
+
+        String bike_url = "http://123.206.80.243:8080/sharing_bicycle/bike_full";
+        Handler bicycle_handler = new Handler()
+        {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case 0:
+                        String data = (String)msg.obj;
+                        bike_vector=Bicycle_data.get_data(data);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        NetUtils.getRequest(bike_url,null,bicycle_handler);
+        for (Bicycle iterator:bike_vector){
+            if ((iterator.getBike_id()+"").equals(bike_id)){
+                return iterator;
+            }
+        }
+
+
+        return bike;
     }
 
 }

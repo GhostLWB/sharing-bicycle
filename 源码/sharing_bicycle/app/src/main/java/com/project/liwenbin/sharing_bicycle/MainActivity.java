@@ -2,6 +2,7 @@ package com.project.liwenbin.sharing_bicycle;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.baidu.location.BDLocation;
@@ -57,7 +59,11 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import net.sf.json.JSONArray;
 
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity
     private TextView count_time_promt;
     private TextView count_time;
     private boolean ispreorder_done=false;
-    private boolean islock=true;
+    PreorderHelp mainPreHelp;
     // 地图相关
     public LocationClient mLocClient;
     public MyLocationListenner myListener = new MyLocationListenner();
@@ -117,15 +123,18 @@ public class MainActivity extends AppCompatActivity
     private int preorder_interval=-1;
     private int count_time_minute=0;
     private int count_time_second=0;
+    double[] userWalletAndCredit = {0.0, 0.0};
+    private int timeremainning=-1;//负责从savedInstanceState中获得时间数据
 
     //车辆相关
     Vector<Bicycle>bicycles=new Vector<>();
     String bicycle_raw_data=null;
     Marker selectedBicycleMarker=null;
     Bicycle selectedBicycle=null;
+    String Preordered_bike=null;
 
     Handler handler = new Handler();
-    Runnable runnable;
+    Runnable runnable=null;
     int recLen = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,22 +142,43 @@ public class MainActivity extends AppCompatActivity
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_main2);
         context = this;
-
+        if (savedInstanceState!=null){
+            timeremainning=savedInstanceState.getInt("recountTime");
+           // Preordered_bike=savedInstanceState.getString("preorderbike");
+            if (savedInstanceState.getString("mainUser") != null) {
+                user=User.getUser();
+                user.setAccount(savedInstanceState.getString("mainUser"));
+            }
+        }
+        mainPreHelp=PreorderHelp.getPreorderHelp();
 
         //控件注册都在这个方法中
         registerWiget();
-        scroll();
+        scroll();//使背景滚动
         circularProgressView.setVisibility(View.INVISIBLE);
-
 
         //百度地图控件注册
         mBaiduMap = mMapView.getMap();
         mCurrentMode = MyLocationConfiguration.LocationMode.NORMAL;
+
+        //用户信息更新
         user=User.getUser();
         balance=user.getBalance();
         user_credit=user.getCredit();
+        if (user.getAccount()!=null){
+            userWalletAndCredit =queryUserWalletAndCredit(user.getAccount()) ;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    user.setBalance(userWalletAndCredit[0]);
+                    user.setCredit(userWalletAndCredit[1]);
+                }
+            },500);
+        }
 
+        //查询自行车数据
         queryBicycleLoc();
+
 
         /**
          * 设置导航栏
@@ -169,6 +199,8 @@ public class MainActivity extends AppCompatActivity
                    user_id.setText("请登录");
                    balance=0;
                    user_credit=0;
+                   navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setTitle("登录/注册");
+                   navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setIcon(R.drawable.log_in);
                }
                navigationView.setItemIconTintList(null);
                navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setTitle(wallet+tab+balance);
@@ -177,15 +209,18 @@ public class MainActivity extends AppCompatActivity
                    navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setTitle("登录/注册");
                    navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setIcon(R.drawable.log_in);
                }else{
-                   navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setTitle("退出登录");
-                   navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setIcon(R.drawable.log_out);
+                  // navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setTitle("退出登录");
+                   //navigationView.getMenu().getItem(2).getSubMenu().getItem(0).setIcon(R.drawable.log_out);
                }
            }
 
            @Override
            public void onDrawerOpened(View drawerView) {
-               balance=user.getBalance();
-               user_credit=user.getCredit();
+               if (user!=null){
+                   balance=user.getBalance();
+                   user_credit=user.getCredit();
+               }
+
                navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setTitle(wallet+tab+balance);
                navigationView.getMenu().getItem(0).getSubMenu().getItem(1).setTitle(credit+tab+user_credit);
            }
@@ -232,6 +267,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 queryBicycleLoc();
+                selectedBicycle=null;
+                selectedBicycleMarker=null;
+                //将地图中心定位到画面中央
                 if(myLocation!=null){
                     LatLng ll = new LatLng(myLocation.getLatitude(),
                             myLocation.getLongitude());//设置地图新的中心点
@@ -239,6 +277,17 @@ public class MainActivity extends AppCompatActivity
                     builder.target(ll).zoom(21.0f);
                     mBaiduMap.animateMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
 
+                }
+                //查询用户信息
+                if (user.getAccount()!=null){
+                    userWalletAndCredit =queryUserWalletAndCredit(user.getAccount()) ;
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            user.setBalance(userWalletAndCredit[0]);
+                            user.setCredit(userWalletAndCredit[1]);
+                        }
+                    },500);
                 }
 
 
@@ -254,7 +303,6 @@ public class MainActivity extends AppCompatActivity
                             bicycle_raw_data=bicycle_raw_data+" "+json.get(i).toString();
                         }
                         //proccessRawData(bicycle_raw_data);
-
 
                     }
                 }, new Response.ErrorListener() {
@@ -279,54 +327,86 @@ public class MainActivity extends AppCompatActivity
         unlockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                circularProgressView.setVisibility(View.VISIBLE);
+                //用户有没有登录
+                user=User.getUser();
+
+                if (selectedBicycle!=null)
+                Log.d("MainActivity","距离为:"+DistanceUtils.getDistanceOfMeter(myLocation.getLatitude(), myLocation.getLongitude(), selectedBicycle.getLocation().latitude,
+                        selectedBicycle.getLocation().longitude));
+
                 if (user.getAccount()==null){
                     Log.d("MainActivity","user is null");
                     Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
                     Intent myintent=new Intent(context,LoginActivity.class);
                     startActivity(myintent);
+                    finish();
+                //用户有没有选择车辆
                 }else if (selectedBicycle==null){
                     Log.d("MainActivity","user id is:"+user.getAccount());
                     Toast.makeText(context, "您还未选择车辆", Toast.LENGTH_SHORT).show();
-                }else {
+                    circularProgressView.setVisibility(View.INVISIBLE);
+                //用户是否已经在用车
+
+                }else if (DistanceUtils.getDistanceOfMeter(myLocation.getLatitude(), myLocation.getLongitude(), selectedBicycle.getLocation().latitude,
+                                            selectedBicycle.getLocation().longitude) <= 20.0) {//是否在20米范围内
+
+
                     circularProgressView.setVisibility(View.VISIBLE);
-                    if (islock) {//上锁状态，点击按钮的作用是解锁
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
+                    /**
+                     * 清空一些变量的值
+                     */
 
-                                if ((selectedBicycle != null)&&!selectedBicycle.isOrder) {
-                                    if (DistanceUtils.getDistanceOfMeter(myLocation.getLatitude(), myLocation.getLongitude(), selectedBicycle.getLocation().latitude,
-                                            selectedBicycle.getLocation().longitude) <= 20.0) {
-                                        circularProgressView.setVisibility(View.INVISIBLE);
+                    mainPreHelp=PreorderHelp.getPreorderHelp();
+                    //将timeremainning与mainPreHelp.setTime_interval_help(-1)都置为空，表示清除预约信息
+                    timeremainning=-1;
+                    mainPreHelp.setTime_interval_help(-1);
+                    //Preordered_bike=null;
+                    mainPreHelp.setPreorder_bike_id(null);
 
-                                        //与服务器同步，改变selectedbicycle的in_use和is_lock;
-
-                                        unlockButton.setText("我要还车");
-                                        user.setHaveBicycleID(selectedBicycle.getBike_id() + "");
-                                        Toast.makeText(context, "开锁成功！", Toast.LENGTH_SHORT).show();
-                                        islock = false;
-                                        circularProgressView.setVisibility(View.INVISIBLE);
-                                    }else{
-                                        Toast.makeText(context,"距离太远啦，尝试走近一点",Toast.LENGTH_SHORT).show();
-                                        circularProgressView.setVisibility(View.INVISIBLE);
+                    String usrBikeUrl = "http://123.206.80.243:8080/sharing_bicycle/use_bike.do";
+                    List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+                    params.add(new BasicNameValuePair("user_id", user.getAccount()));
+                    params.add(new BasicNameValuePair("bike_id", selectedBicycle.getBike_id() + ""));
+                    Handler handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what) {
+                                case 1:
+                                    String result = (String) msg.obj;
+                                    net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(result);
+                                    boolean flag = json.getBoolean("flag");
+                                    circularProgressView.setVisibility(View.INVISIBLE);
+                                    if (flag) {
+                                        Toast.makeText(context,"车辆与您的距离为"+DistanceUtils.getDistanceOfMeter(myLocation.getLatitude(), myLocation.getLongitude(), selectedBicycle.getLocation().latitude,
+                                                selectedBicycle.getLocation().longitude)+"米,开锁成功",Toast.LENGTH_SHORT).show();
+                                        Bundle using_bundle = new Bundle();
+                                        Intent usingIntent = new Intent(context, UsingBicycle.class);
+                                        using_bundle.putString("MainUser", user.getAccount());
+                                        using_bundle.putString("MainBicycle", selectedBicycle.getBike_id() + "");
+                                        usingIntent.putExtras(using_bundle);
+                                        startActivity(usingIntent);
+                                        finish();
+                                    } else {
+                                        String reason = json.getString("reason");
+                                        Toast.makeText(context, "您无法用车，因为" + reason, Toast.LENGTH_SHORT).show();
                                     }
-                                }
 
+                                    break;
                             }
-                        }, 1000);
-                    } else {//解锁状态，点击按钮的作用是上锁
-                        selectedBicycle = null;
-                        user.setHaveBicycleID(null);
-                        unlockButton.setText("我要用车");
-                        islock = true;
 
-                        //与服务器同步，更新车辆的is_lock和in_use状态.
-                    }
+                        }
+                    };
+                    NetUtils.postRequest(usrBikeUrl, params, handler);
 
 
+
+
+                }else{
+                    Toast.makeText(context,"车辆与您的距离为"+DistanceUtils.getDistanceOfMeter(myLocation.getLatitude(), myLocation.getLongitude(), selectedBicycle.getLocation().latitude,
+                            selectedBicycle.getLocation().longitude)+"米,请再靠近一些",Toast.LENGTH_SHORT).show();
+                    circularProgressView.setVisibility(View.INVISIBLE);
                 }
-
-
             }
         });
         /**
@@ -335,7 +415,9 @@ public class MainActivity extends AppCompatActivity
         navigteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"正在开发中...", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(context,NavigateActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
         /**
@@ -347,23 +429,33 @@ public class MainActivity extends AppCompatActivity
 
                 Intent intent=new Intent(context,PreorderActivity.class);
                 Bundle mybundle=new Bundle();
+                user=User.getUser();
+                /**
+                 * 判断前提条件：1.用户已经登录 2.用户已经选择车辆
+                 */
                 if (user.getAccount()==null){
                     Log.d("MainActivity","user is null");
                     Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
-                    Intent myintent=new Intent(context,LoginActivity.class);
-                    startActivity(myintent);
+                    Intent myTempintent=new Intent(context,LoginActivity.class);
+                    startActivity(myTempintent);
+                    finish();
                 }else if (selectedBicycle==null){
                     Log.d("MainActivity","user id is:"+user.getAccount());
                     Toast.makeText(context, "您还未选择车辆", Toast.LENGTH_SHORT).show();
-                }else{
-                    circularProgressView.setVisibility(View.VISIBLE);
-                    mybundle.putString(preorderKey,selectedBicycle.getBike_id()+"");
-                    intent.putExtras(mybundle);
-                    startActivityForResult(intent,1);
-                    circularProgressView.setVisibility(View.INVISIBLE);
-                    //finish();
+                }else if (selectedBicycle.isOrder()) {
+                    Toast.makeText(context, "车辆已经被预约", Toast.LENGTH_SHORT).show();
+                }else {
+                    //Preordered_bike=null;
+                    Log.d("MainActivity","bike id is:"+selectedBicycle.getBike_id()+"");
+                        circularProgressView.setVisibility(View.VISIBLE);
+                        //使用bundle向PreorderActivity传数据并接收返回的数据
+                        mybundle.putString(preorderKey,selectedBicycle.getBike_id()+"");
+                        intent.putExtras(mybundle);
+                        startActivity(intent);
+                        circularProgressView.setVisibility(View.INVISIBLE);
+                        finish();
+                    }
                 }
-            }
         });
         /**
          * 反馈按钮
@@ -371,7 +463,40 @@ public class MainActivity extends AppCompatActivity
         reportButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context,"正在开发中...", Toast.LENGTH_SHORT).show();
+//                if (user==null){
+//                    Log.d("MainActivity","user is null");
+//                    Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+//                    Intent myTempintent=new Intent(context,LoginActivity.class);
+//                    startActivity(myTempintent);
+//                    finish();
+//                }else
+                user=User.getUser();
+                if (user.getAccount()==null){
+                    Log.d("MainActivity","user is null");
+                    Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                    Intent myTempintent=new Intent(context,LoginActivity.class);
+                    startActivity(myTempintent);
+                    finish();
+                }else{
+                    if (selectedBicycle==null){
+                        Bundle reportBundle=new Bundle();
+                        Intent reportIntent=new Intent(context,ReportActivity.class);
+                        reportBundle.putInt("ReportActivity1",0);
+                        reportBundle.putString("ReportActivity2",myLocation.getLatitude()+myLocation.getLongitude()+"");
+                        reportIntent.putExtras(reportBundle);
+                        startActivity(reportIntent);
+                        finish();
+                    }else{//用户有选择车辆，发送车辆ID
+                        Bundle reportBundle=new Bundle();
+                        Intent reportIntent=new Intent(context,ReportActivity.class);
+                        reportBundle.putInt("ReportActivity1",1);
+                        reportBundle.putString("ReportActivity2",selectedBicycle.getBike_id()+"");
+                        reportIntent.putExtras(reportBundle);
+                        startActivity(reportIntent);
+                        finish();
+                    }
+                }
+
             }
         });
 
@@ -381,20 +506,40 @@ public class MainActivity extends AppCompatActivity
         BaiduMap.OnMarkerClickListener markerClickListener=new BaiduMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                /**
+                 * 用户之前没有选择车辆
+                 */
                 if (selectedBicycleMarker==null) {
                     selectedBicycleMarker = marker;
                     selectedBicycle = findBicycleByID(selectedBicycleMarker.getTitle());
                     marker.setIcon(bd_selected);
+                    Toast.makeText(context,"您选择了"+selectedBicycle.getBike_id()+"号车辆",Toast.LENGTH_SHORT).show();
                     Log.d("MainActivity","bicycle selected:"+selectedBicycle.getBike_id());
                     return true;
-                }else if (marker==selectedBicycleMarker){
-                    selectedBicycleMarker=null;
-                    selectedBicycle=null;
-                    marker.setIcon(bd);
+                /**
+                 * 用户之前选择过车辆
+                 */
                 }else{
+                    selectedBicycleMarker.setIcon(bd);
                     selectedBicycle=null;
-                    Toast.makeText(context,"一次只能选择一辆车哦",Toast.LENGTH_SHORT).show();
-                }                return false;
+                    selectedBicycleMarker=marker;
+                    selectedBicycle=findBicycleByID(selectedBicycleMarker.getTitle());
+                    marker.setIcon(bd_selected);
+                    Toast.makeText(context,"您选择了"+selectedBicycle.getBike_id()+"号车辆",Toast.LENGTH_SHORT).show();
+                    return  true;
+                    }
+//                }else if (marker==selectedBicycleMarker){
+//                    selectedBicycleMarker=null;
+//                    selectedBicycle=null;
+//                    marker.setIcon(bd);
+//                }else{
+//                    /**
+//                     * 用户选择了其他车辆
+//                     */
+//                    selectedBicycle=null;
+//                    selectedBicycleMarker
+//                    selectedBicycleMarker=marker;
+//                }
             }
         };
         mBaiduMap.setOnMarkerClickListener(markerClickListener);
@@ -409,7 +554,11 @@ public class MainActivity extends AppCompatActivity
 
         for (Bicycle iterator:bicycles){
             Marker bicycleMarker;
-            if (iterator.isOrder){
+            if (iterator.isBreakedown){
+                OverlayOptions markOptions=new MarkerOptions().position(iterator.getLocation())
+                        .icon(bd_unlockable).zIndex(9).draggable(false);
+                bicycleMarker=(Marker)mBaiduMap.addOverlay(markOptions);
+            } else if (iterator.isOrder||iterator.in_use){
                 OverlayOptions markOptions=new MarkerOptions().position(iterator.getLocation())
                         .icon(bd_preorder).zIndex(9).draggable(false);
                  bicycleMarker=(Marker)mBaiduMap.addOverlay(markOptions);
@@ -470,6 +619,44 @@ public class MainActivity extends AppCompatActivity
         public void onReceivePoi(BDLocation poiLocation) {
         }
     }//end of class MyLocationListenner
+
+    /**
+     * 向服务器查询获取用户的余额和积分
+     *
+     * @param id
+     * @return
+     */
+    private double[] queryUserWalletAndCredit(String id) {
+        final String userid = id;
+        final double[] result = new double[2];
+        String url = "http://123.206.80.243:8080/sharing_bicycle/wallet_credit.do";
+        RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String s) {
+                net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(s);
+                result[0] = Double.parseDouble(js.getString("balance"));
+                result[1] = Double.parseDouble(js.getString("credit"));
+                Log.d("LoginActivity", "user's balance is" + result[0]);
+                Log.d("LoginActivity", "user's credit is" + result[1]);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                // Toast.makeText(MainActivity.this,volleyError.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("id", userid);
+                return map;
+            }
+        };
+        mQueue.add(stringRequest);
+        return result;
+    }
+
     /**
      * 注册控件的方法
      */
@@ -487,9 +674,9 @@ public class MainActivity extends AppCompatActivity
         main_roll_one=(ImageView)findViewById(R.id.main_roll_one);
         main_roll_two=(ImageView)findViewById(R.id.main_roll_two);
         main_roll_three=(ImageView)findViewById(R.id.main_roll_three);
-        scrollBackgroundAnimation1=new TranslateAnimation(-2000,-300,00,00);
-        scrollBackgroundAnimation2=new TranslateAnimation(-300,-1300,40,40);
-        scrollBackgroundAnimation3=new TranslateAnimation(-1900,-400,60,60);
+        scrollBackgroundAnimation1=new TranslateAnimation(-1920,-300,00,00);
+        scrollBackgroundAnimation2=new TranslateAnimation(-50,-1600,40,40);
+        scrollBackgroundAnimation3=new TranslateAnimation(-1900,-100,60,60);
         count_time_background=(ImageView)findViewById(R.id.count_time_imageview);
         count_time_promt=(TextView)findViewById(R.id.count_time_prompt);
         count_time=(TextView)findViewById(R.id.count_time);
@@ -528,20 +715,19 @@ public class MainActivity extends AppCompatActivity
      */
     private void scroll(){
 
-        scrollBackgroundAnimation1.setDuration(19000);               //设置每一次动画的持续时间
+        scrollBackgroundAnimation1.setDuration(12000);               //设置每一次动画的持续时间
         scrollBackgroundAnimation1.setRepeatCount(Animation.INFINITE);               //设置重复次数
         scrollBackgroundAnimation1.setRepeatMode(Animation.REVERSE);    //反方向执行
         main_roll_one.setAnimation(scrollBackgroundAnimation1);             //设置动画效果
         scrollBackgroundAnimation1.startNow();                      //启动动画
 
-
-        scrollBackgroundAnimation2.setDuration(17000);               //设置每一次动画的持续时间
+        scrollBackgroundAnimation2.setDuration(9000);               //设置每一次动画的持续时间
         scrollBackgroundAnimation2.setRepeatCount(Animation.INFINITE);               //设置重复次数
         scrollBackgroundAnimation2.setRepeatMode(Animation.REVERSE);    //反方向执行
         main_roll_two.setAnimation(scrollBackgroundAnimation2);             //设置动画效果
         scrollBackgroundAnimation2.startNow();
 
-        scrollBackgroundAnimation3.setDuration(16000);               //设置每一次动画的持续时间
+        scrollBackgroundAnimation3.setDuration(13000);               //设置每一次动画的持续时间
         scrollBackgroundAnimation3.setRepeatCount(Animation.INFINITE);               //设置重复次数
         scrollBackgroundAnimation3.setRepeatMode(Animation.REVERSE);    //反方向执行
         main_roll_three.setAnimation(scrollBackgroundAnimation3);             //设置动画效果
@@ -561,31 +747,52 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.wallet) {
-            // Handle the camera action
+            user=User.getUser();
+            if (user.getAccount()==null){
+                Log.d("MainActivity","user is null");
+                Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                Intent myintent=new Intent(context,LoginActivity.class);
+                startActivity(myintent);
+                finish();
+            }else{
+                Intent intent=new Intent(context,WalletActivity.class);
+                startActivity(intent);
+                finish();
+            }
         } else if (id == R.id.credit) {
-
+            user=User.getUser();
+            if (user.getAccount()==null){
+                Log.d("MainActivity","user is null");
+                Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show();
+                Intent myintent=new Intent(context,LoginActivity.class);
+                startActivity(myintent);
+                finish();
+            }else{
+                Intent intent=new Intent(context,CreditActivity.class);
+                startActivity(intent);
+                finish();
+            }
         } else if (id == R.id.trip) {
             Intent intent=new Intent(context,ChartActivity.class);
             startActivity(intent);
             finish();
-
-        } else if (id == R.id.report) {
-
+        } else if (id == R.id.help) {
+                Intent helpintent=new Intent(this,HelpActivity.class);
+                startActivity(helpintent);
+                finish();
         } else if (id == R.id.log) {
             Log.d("MainActivity","R.id.log selected");
-            if (account_raw==null){
+            if (user_id.getText().equals("请登录")||user.getAccount()==null){
                 Intent intent=new Intent(this,LoginActivity.class);
                 startActivity(intent);
                 finish();
             }else
             {
                 Log.d("MainActivity","log out selected");
-                user=null;
+                user=User.getUser();
+                user.setAccount(null);
                 //Log.d("MainActivity","user object is null"+user.equals(null));
             }
-
-        } else if (id == R.id.credit) {
-
         }
 
 
@@ -605,44 +812,73 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    /**
-     * 处理从PreorderActivity回传的参数
-     * requestCode:0->向PreorderActivity传递bicycleID时用的
-     * resultCode:0->从PreorderActivity返回预约时间间隔时用的
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==1&&resultCode==1){
-            if (data.getExtras()!=null) {
-                ispreorder_done=true;
-                Bundle mybundle = data.getExtras();
-                preorder_interval=mybundle.getInt("preorder_interval");
-                Log.d("MainActivity","time interval is :"+preorder_interval);
-            }
-        }
-    }
+
     /**
      * 倒计时
      */
     private void count_time(final int interval){
-        recLen=interval*60;
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                count_time_minute=recLen/60;
-                count_time_second=recLen%60;
-                recLen--;
-                count_time.setText(count_time_minute+":"+count_time_second);
-                handler.postDelayed(this, 1000);
-                if (recLen==0){
-                    Toast.makeText(context, "预约时间已到", Toast.LENGTH_SHORT).show();
-                    count_time_background.setVisibility(View.INVISIBLE);
-                    count_time_promt.setVisibility(View.INVISIBLE);
-                    count_time.setVisibility(View.INVISIBLE);
+        recLen=interval;
+        if (runnable==null){
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    count_time_minute=recLen/60;
+                    count_time_second=recLen%60;
+                    recLen--;
+                    timeremainning=recLen;
+                    mainPreHelp.setTime_interval_help(recLen);
+                    Log.d("MainActivity", "count_time_minute is: " + count_time_minute);
+                    Log.d("MainActivity", "count_time_second is: " + count_time_second);
+                    if (count_time_minute<10){
+                        count_time.setText("0"+count_time_minute+":"+count_time_second);
+                    }else{
+                        count_time.setText(count_time_minute+":"+count_time_second);
+                    }
+                    handler.postDelayed(this, 1000);
+                    if (recLen<=0){
+                        handler.removeCallbacks(runnable);
+                        Toast.makeText(context, "预约时间已到", Toast.LENGTH_SHORT).show();
+                        timeremainning=-1;
+                        mainPreHelp.setTime_interval_help(-1);
+                        mainPreHelp=null;
+                        //设置UI
+                        count_time_background.setVisibility(View.INVISIBLE);
+                        count_time_promt.setVisibility(View.INVISIBLE);
+                        count_time.setVisibility(View.INVISIBLE);
+
+                        mainPreHelp=PreorderHelp.getPreorderHelp();
+                        String finishPreorderUrl="http://123.206.80.243:8080/sharing_bicycle/finish_preorder.do";
+                        List<BasicNameValuePair> param=new ArrayList<>();
+                        param.add(new BasicNameValuePair("user_id",user.getAccount()));
+                        param.add(new BasicNameValuePair("bike_id",mainPreHelp.getPreorder_bike_id()));
+                        Handler finishPreorderHandler=new Handler(){
+                            @Override
+                            public void handleMessage(Message msg) {
+                                switch (msg.what){
+                                    case 1:
+                                        String result = (String)msg.obj;
+                                        net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(result);
+                                        boolean flag = json.getBoolean("flag");
+                                        if (flag){
+                                            Log.d("PreorderInfo","成功结束预约");
+                                            mainPreHelp.setPreorder_bike_id(null);
+                                            mainPreHelp.setTime_interval_help(-1);
+                                        }else{
+                                            Log.d("PreorderInfo","结束预约失败");
+                                        }
+                                }
+                            }
+                        };
+                        NetUtils.postRequest(finishPreorderUrl,param,finishPreorderHandler);
+
+                    }
                 }
-            }
-        };
+            };
+        }else
+        {
+            runnable.run();
+        }
+
     }
 
 
@@ -684,37 +920,96 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
-
-        /**
-         * Actiity生命周期管理
-         */
+    /**
+     * Actiity生命周期管理
+     */
         @Override
         protected void onPause() {
             mMapView.onPause();
+            if (timeremainning>0){
+                mainPreHelp.setTime_interval_help(timeremainning);
+            }
             super.onPause();
         }
 
         @Override
         protected void onResume() {
             mMapView.onResume();
+            user=User.getUser();
+            mainPreHelp=PreorderHelp.getPreorderHelp();
 
-            if (!ispreorder_done){
-                count_time_background.setVisibility(View.INVISIBLE);
-                count_time_promt.setVisibility(View.INVISIBLE);
-                count_time.setVisibility(View.INVISIBLE);
-            }else{
+            //设置UI
+            count_time_background.setVisibility(View.INVISIBLE);
+            count_time_promt.setVisibility(View.INVISIBLE);
+            count_time.setVisibility(View.INVISIBLE);
+
+            Log.d("MainActivity", "timeramainTemp is: " + timeremainning);
+            Log.d("MainActivity", "mainPreHelp.getTime_interval_help() is: " + mainPreHelp.getTime_interval_help());
+
+            //如果timeremainning大于-1，或者mainPreHelp.getTime_interval_help()>-1，表示上次预约的倒计时没有结束或者已经完成一次预约
+            if ((timeremainning>-1)||mainPreHelp.getTime_interval_help()>-1) {
+                //ispreorder_done = true;
+                if (timeremainning!=-1){
+                    preorder_interval = timeremainning;
+                }
+                if (mainPreHelp.getTime_interval_help()!=-1){
+                    preorder_interval = mainPreHelp.getTime_interval_help();
+                }
+                Log.d("MainActivity", "timeramainTemp is: " + timeremainning);
+                Log.d("MainActivity", "mainPreHelp.getTime_interval_help() is: " + mainPreHelp.getTime_interval_help());
+
                 count_time_background.setVisibility(View.VISIBLE);
                 count_time_promt.setVisibility(View.VISIBLE);
                 count_time.setVisibility(View.VISIBLE);
-                if (preorder_interval!=-1){
-                    count_time(preorder_interval);
-                }
-                handler.postDelayed(runnable,1000);
+
+                Log.d("MainActivity", "preorder_interval is: " + preorder_interval);
+                count_time(preorder_interval);
+                handler.postDelayed(runnable, 1000);
+            }else{
+                handler.removeCallbacks(runnable);
+                    mainPreHelp=PreorderHelp.getPreorderHelp();
+                    mainPreHelp.setTime_interval_help(-1);
+                    timeremainning=-1;
+                    handler.removeCallbacks(runnable);
+                    count_time_background.setVisibility(View.INVISIBLE);
+                    count_time_promt.setVisibility(View.INVISIBLE);
+                    count_time.setVisibility(View.INVISIBLE);
+
+                    String finishPreorderUrl="http://123.206.80.243:8080/sharing_bicycle/finish_preorder.do";
+                    List<BasicNameValuePair> param=new ArrayList<>();
+                    param.add(new BasicNameValuePair("user_id",user.getAccount()));
+                    param.add(new BasicNameValuePair("bike_id",mainPreHelp.getPreorder_bike_id()));
+                    Handler finishPreorderHandler=new Handler(){
+                        @Override
+                        public void handleMessage(Message msg) {
+                            switch (msg.what){
+                                case 1:
+
+                                    String result = (String)msg.obj;
+                                    net.sf.json.JSONObject json = net.sf.json.JSONObject.fromObject(result);
+                                    boolean flag = json.getBoolean("flag");
+                                    if (flag){
+                                        Log.d("PreorderInfo","成功结束预约");
+                                    }else{
+                                        Log.d("PreorderInfo","结束预约失败");
+                                    }
+                            }
+                        }
+                    };
+                    NetUtils.postRequest(finishPreorderUrl,param,finishPreorderHandler);
             }
             super.onResume();
         }
 
-        @Override
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+        outState.putInt("recountTime",timeremainning);
+        //outState.putString("preorderbike",Preordered_bike);
+        outState.putString("mainUser",user.getAccount());
+    }
+
+    @Override
         protected void onDestroy() {
             // 退出时销毁定位
             mLocClient.stop();
@@ -729,3 +1024,20 @@ public class MainActivity extends AppCompatActivity
         }
 
 }
+//  ┏┓　　　┏┓
+//┏┛┻━━━┛┻┓
+//┃　　　　　　　┃ 　
+//┃　　　━　　　┃
+//┃　┳┛　┗┳　┃
+//┃　　　　　　　┃
+//┃　　　┻　　　┃
+//┃　　　　　　　┃
+//┗━┓　　　┏━┛
+//   ┃　　　┃   神兽保佑　　　　　　　　
+//   ┃　　　┃   代码无BUG
+//   ┃　　　┗━━━┓
+//   ┃　　　　　　　┣┓
+//   ┃　　　　　　　┏┛
+//   ┗┓┓┏━┳┓┏┛
+//     ┃┫┫　┃┫┫
+//     ┗┻┛　┗┻┛ 　

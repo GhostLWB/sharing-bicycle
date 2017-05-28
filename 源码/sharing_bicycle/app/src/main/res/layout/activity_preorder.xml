@@ -2,8 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#26c0ff">
-
+    android:background="#ffffff">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="#26c0ff"/>
+<!--
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="500dip"
@@ -11,7 +15,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:id="@+id/imageView9" />
-
+-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="500dip"
+        android:background="#ffffffff"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/imageView9" />
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="160dip"
@@ -32,7 +43,7 @@
     <Button
         android:layout_width="200dip"
         android:layout_height="45dip"
-        android:text="确认预约"
+        android:text="@string/preorder_confirm_button"
         android:textSize="18sp"
         android:textColor="#ffffff"
         android:id="@+id/confirm_preorder"
@@ -60,7 +71,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="确认预约"
+        android:text="@string/preorder_confirm_text"
         android:textSize="23dip"
         android:id="@+id/textView4"
         android:textColor="#ffffff"
@@ -71,7 +82,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="车编号"
+        android:text="@string/preorder_bicycle_id"
         android:id="@+id/textView5"
         android:textColor="#26c0ff"
         android:textSize="22sp"
@@ -103,7 +114,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="从"
+        android:text="@string/preorder_from"
         android:textColor="#26c0ff"
         android:textSize="22sp"
         android:id="@+id/textView6"
@@ -114,7 +125,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="到"
+        android:text="@string/preorder_to"
         android:textColor="#26c0ff"
         android:textSize="22sp"
         android:id="@+id/textView7"
@@ -160,4 +171,15 @@
         android:layout_alignStart="@+id/imageView12"
         android:layout_marginTop="6dip"
         android:layout_marginStart="40dip"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/preorder_hint"
+        android:id="@+id/textView9"
+        android:textSize="15sp"
+        android:textColor="#fc4e9a"
+        android:layout_above="@+id/confirm_preorder"
+        android:layout_marginBottom="8dip"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

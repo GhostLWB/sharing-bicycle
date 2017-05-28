@@ -33,7 +33,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="登录"
+            android:text="@string/login_logo_text"
             android:textSize="23sp"
             android:textColor="#ffffff"
             android:id="@+id/textView"
@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/register_input_account"
             android:layout_below="@+id/textView"
-            android:hint="输入账号"
+            android:inputType="number"
+            android:hint="@string/login_input_hint"
             android:textColorHint="#ffffff"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp" />
@@ -57,7 +58,7 @@
             android:inputType="textPassword"
             android:ems="10"
             android:id="@+id/register_input_password"
-            android:hint="输入密码"
+            android:hint="@string/login_input_pwd_hint"
             android:textColorHint="#ffffff"
             android:layout_below="@+id/register_input_account"
             android:layout_centerHorizontal="true"
@@ -75,7 +76,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="登 录"
+            android:text="@string/login_button"
             android:textColor="#26c0ff"
             android:textSize="23sp"
             android:id="@+id/textView2"
@@ -122,7 +123,7 @@
         <Button
             android:layout_width="220dip"
             android:layout_height="45dip"
-            android:text="注 册"
+            android:text="@string/login_to_register_button"
             android:textColor="#26c0ff"
             android:textSize="23sp"
             android:id="@+id/regisertButton"

@@ -57,7 +57,7 @@
         android:background="@drawable/quit"
         android:layout_alignTop="@+id/imageView2"
         android:layout_marginTop="40dip"
-        android:text="我要用车"
+        android:text="@string/main_usebike_button"
         android:textColor="#26c0ff"
         android:layout_centerHorizontal="true" />
 
@@ -112,20 +112,20 @@
     <Button
         android:layout_width="60dip"
         android:layout_height="60dip"
-        android:text="刷新"
+        android:text="@string/main_refresh_button"
         android:textSize="12sp"
         android:textColor="#26c0ff"
         android:id="@+id/locatebutton"
         android:background="@drawable/main_refresh_bg"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="90dip"
         android:layout_alignStart="@+id/reportButton" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="导航"
+        android:text="@string/main_navigate_button"
         android:textSize="8sp"
         android:textColor="#ffffff"
         android:id="@+id/navigate_text"
@@ -138,7 +138,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="预约"
+        android:text="@string/main_preorder_button"
         android:textSize="8sp"
         android:textColor="#ffffff"
         android:id="@+id/preorder_text"
@@ -151,7 +151,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="报告"
+        android:text="@string/main_report_button"
         android:textSize="8sp"
         android:textColor="#ffffff"
         android:id="@+id/report_text"
@@ -168,8 +168,8 @@
         android:layout_centerVertical="true"
         app:cpv_indeterminate="true"/>
     <ImageView
-        android:layout_width="290dip"
-        android:layout_height="70dip"
+        android:layout_width="440dip"
+        android:layout_height="130dip"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:id="@+id/count_time_imageview"
@@ -177,23 +177,25 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="预约倒计时"
+        android:text="@string/main_preorder_count_t"
         android:id="@+id/count_time_prompt"
         android:textColor="#ffffff"
         android:textSize="15sp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dip"/>
+        android:layout_alignStart="@+id/navigateButton"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="12dip"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
         android:id="@+id/count_time"
-        android:textColor="#fc4e9a"
+        android:textColor="#ffffff"
         android:textSize="15sp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dip"/>
+        android:layout_alignTop="@+id/count_time_prompt"
+        android:layout_alignStart="@+id/count_time_prompt"
+        android:layout_marginStart="90dp"
+        />
 
 
 

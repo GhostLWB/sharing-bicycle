@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
-    <item android:title="个人信息" >
+    <item android:title="@string/slide_menu_user_info" >
         <menu>
             <item
                 android:id="@+id/wallet"
                 android:icon="@drawable/wallet"
-                android:title="我的钱包" />
+                android:title="@string/slide_menu_wallet" />
             <item
                 android:id="@+id/credit"
                 android:icon="@drawable/credit"
-                android:title="我的积分" />
+                android:title="@string/slide_menu_credi" />
         </menu>
     </item>
     </group>
 
     <group android:checkableBehavior="single">
-        <item android:title="行程管理">
+        <item android:title="@string/slide_menu_trip_manage">
             <menu>
                 <item
                     android:id="@+id/trip"
                     android:icon="@drawable/trip_manage"
-                    android:title="行程统计" />
+                    android:title="@string/slide_menu_trip_recode" />
                 <item
-                    android:id="@+id/report"
+                    android:id="@+id/help"
                     android:icon="@drawable/navigate_group2"
-                    android:title="车辆报修" />
+                    android:title="@string/navi_help" />
             </menu>
         </item>
     </group>
 <group android:checkableBehavior="single">
-                <item android:title="账号管理">
+                <item android:title="@string/slide_menu_account_manage">
                     <menu>
                         <item
                         android:id="@+id/log"
                         android:icon="@drawable/log_out"
-                        android:title="退出登录"/>
+                        android:title="@string/slide_log_out"/>
                      </menu>
                  </item>
 </group>

@@ -35,8 +35,8 @@ public class RegisterActivity extends Activity {
     private EditText confirm_password;
     private ImageButton regist;
     private String account;
-    private String password1;
-    private String password2;
+    private String password1=null;
+    private String password2=null;
     private Context context;
     private Animation scrollBackgroundAnimation;
     private ImageView scrollBackgroundImage;
@@ -73,51 +73,66 @@ public class RegisterActivity extends Activity {
                 account=input_account.getText().toString();
                 password1=input_password.getText().toString();
                 password2=confirm_password.getText().toString();
-                Log.d("register","password1 is"+password1);
-                Log.d("register","password2 is"+password2);
-                if(password1.equals(password2)){
-                    //do something
-                    String url = "http://123.206.80.243:8080/sharing_bicycle/register.do";
-                    RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-                    StringRequest stringRequest =new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String s) {
-                            net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(s);
-                            boolean flag =js.getBoolean("flag");
-                            boolean hav_register=js.getBoolean("hav_register");
-                            if((flag==true)&&(hav_register==false)) {
-                                Toast.makeText(context, "SUCCESS", Toast.LENGTH_SHORT).show();
+                if (account.length()==11){
+                if (password1.length()>=6){
+                    Log.d("register","password1 is"+password1);
+                    Log.d("register","password2 is"+password2);
+                    if(password1.equals(password2)){
+                        //do something
+                        String url = "http://123.206.80.243:8080/sharing_bicycle/register.do";
+                        RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+                        StringRequest stringRequest =new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String s) {
+                                net.sf.json.JSONObject js = net.sf.json.JSONObject.fromObject(s);
+                                boolean flag =js.getBoolean("flag");
+                                boolean hav_register=js.getBoolean("hav_register");
+                                if((flag==true)&&(hav_register==false)) {
+                                    Toast.makeText(context, "注册成功！", Toast.LENGTH_SHORT).show();
+                                    Intent registerIntent=new Intent(RegisterActivity.this,LoginActivity.class);
+                                    startActivity(registerIntent);
+                                    finish();
+                                }
+                                else if (hav_register==true)
+                                {
+                                    Toast.makeText(context,"已注册",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(context,"fail",Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            else if (hav_register==true)
-                            {
-                                Toast.makeText(context,"已注册",Toast.LENGTH_SHORT).show();
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError volleyError) {
+                                Toast.makeText(context,"连接失败",Toast.LENGTH_SHORT).show();
                             }
-                            else
-                            {
-                                Toast.makeText(context,"fail",Toast.LENGTH_SHORT).show();
+                        }){
+                            @Override
+                            protected Map<String, String> getParams() throws AuthFailureError {
+                                Map<String,String> map =new HashMap<String, String>();
+                                map.put("id",account);
+                                map.put("password",password1);
+                                return  map;
                             }
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            Toast.makeText(context,"连接失败",Toast.LENGTH_SHORT).show();
-                        }
-                    }){
-                        @Override
-                        protected Map<String, String> getParams() throws AuthFailureError {
-                            Map<String,String> map =new HashMap<String, String>();
-                            map.put("id",account);
-                            map.put("password",password1);
-                            return  map;
-                        }
-                    };
-                    mQueue.add(stringRequest);
+                        };
+                        mQueue.add(stringRequest);
+                    }else{
+                        Toast prompt=Toast.makeText(context,"密码输入不一致！",Toast.LENGTH_SHORT);
+                        prompt.setGravity(Gravity.CENTER,100,200);
+                        prompt.show();
+                        input_password.setText("");
+                        confirm_password.setText("");
+                    }
                 }else{
-                    Toast prompt=Toast.makeText(context,"密码输入不一致！",Toast.LENGTH_SHORT);
-                    prompt.setGravity(Gravity.CENTER,100,200);
-                    prompt.show();
-                    input_password.setText("");
-                    confirm_password.setText("");
+                    Toast.makeText(context,"密码输入不一致！",Toast.LENGTH_SHORT).show();
+                    password1=null;
+                    password2=null;
+
+                }
+                }else{
+                    input_account.setText("");
+                    Toast.makeText(context,"账户格式不正确，请重新输入",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -130,5 +145,19 @@ public class RegisterActivity extends Activity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(context,MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        ReleaseImageViewUtils.releaseImage(scrollBackgroundImage);
+        ImageViewUtils.releaseImageViewResouce(scrollBackgroundImage);
+        super.onDestroy();
     }
 }

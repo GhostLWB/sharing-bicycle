@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#26c0ff">
+    <ImageView
+        android:layout_width="35dip"
+        android:layout_height="26dip"
+        android:id="@+id/login_back_image"
+        android:background="@drawable/back"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dip"
+        android:layout_marginStart="12dip"/>
+
+    <ImageButton
+        android:layout_width="60dip"
+        android:layout_height="50dip"
+        android:id="@+id/help_content_back_button"
+        android:background="#00000000"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_title"
+        android:textSize="23dip"
+        android:textColor="#ffffff"
+        android:id="@+id/help_content_title"
+        android:layout_alignBottom="@+id/help_content_back_button"
+        android:layout_marginBottom="8dip"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="220dip"
+        android:id="@+id/help_tutorial_list"
+        android:background="#444F5A"
+        android:layout_below="@+id/help_content_back_button"
+        android:layout_marginTop="49dip"
+        android:layout_alignParentEnd="true" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="160dip"
+        android:id="@+id/help_question_list"
+        android:background="#444F5A"
+        android:layout_below="@+id/help_tutorial_list"
+        android:layout_marginTop="42dip"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/help_tuto_prompt"
+        android:textSize="20sp"
+        android:textColor="#ffffff"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/help_content_title"
+        android:layout_marginTop="12dip"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/q_and_a"
+        android:textColor="#ffffff"
+        android:id="@+id/textView10"
+        android:textSize="20sp"
+        android:layout_below="@+id/help_tutorial_list"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true" />
+<!--
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="120dip"
+        android:id="@+id/imageView13"
+        android:background="@drawable/buttum_repo"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+-->
+</RelativeLayout>

@@ -4,16 +4,22 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#26c0ff">
+    android:background="#444F5A">
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="500dip"
+        android:layout_height="60dip"
+        android:background="#26c0ff"/>
+    <LinearLayout
+        android:layout_width="360dp"
+        android:layout_height="420dip"
         android:orientation="vertical"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true">
+
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/help_content_title"
+        android:layout_marginTop="40dip">
 
 
         <android.support.design.widget.TabLayout
@@ -29,7 +35,8 @@
             android:id="@+id/chart_pager"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:layout_marginTop="40dp">
 
         </android.support.v4.view.ViewPager>
 
@@ -55,14 +62,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="行程统计"
-        android:textSize="23dip"
+        android:text="@string/chart_count_trip"
+        android:textSize="23sp"
         android:textColor="#ffffff"
-        android:id="@+id/textView8"
-        android:layout_alignBottom="@+id/analysis_back_button"
-        android:layout_marginBottom="8dip"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/help_content_title"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignBottom="@+id/login_back_image"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="100dip"
+        android:id="@+id/imageView18"
+        android:background="@drawable/buttum"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
 

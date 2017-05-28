@@ -12,12 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="280dip"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:background="@drawable/navigate_header_bg" />
+        android:background="#26c0ff" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请登录"
+        android:text="@string/slide_menu_login"
         android:id="@+id/user_acccount"
         android:textColor="#ffffff"
         android:textSize="15sp"

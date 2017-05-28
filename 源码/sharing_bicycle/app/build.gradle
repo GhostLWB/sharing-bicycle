@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 25
     buildToolsVersion '23.0.3'
     useLibrary 'org.apache.http.legacy'
     defaultConfig {
+       // multiDexEnabled true
         applicationId "com.project.liwenbin.sharing_bicycle"
         minSdkVersion 19
         targetSdkVersion 25
@@ -13,9 +15,13 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
         }
+    }
+    dexOptions {
+        incremental true
     }
 }
 
@@ -25,7 +31,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile files('libs/commons-beanutils-1.7.0.jar')
-    compile files('libs/BaiduLBS_Androidl.jar')
+    //compile files('libs/BaiduLBS_Androidl.jar')
     compile 'com.github.Idtk:SmallChart:v0.1.1'
     compile 'com.android.support:design:25.2.0'
     compile files('libs/hellocharts-library-1.5.8.jar')
@@ -33,4 +39,5 @@ dependencies {
     //compile files('libs/baidumapapi.jar')
     compile 'com.android.support:design:25.2.0'
     //compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
+    compile files('libs/AMap3DMap_5.0.0_AMapNavi_5.0.1_AMapSearch_5.0.0_AMapLocation_3.4.0_20170427.jar')
 }

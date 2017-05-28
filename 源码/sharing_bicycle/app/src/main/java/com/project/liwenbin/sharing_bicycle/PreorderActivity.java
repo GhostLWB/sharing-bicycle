@@ -25,6 +25,7 @@ import com.baidu.platform.comapi.map.C;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.security.PrivateKey;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,6 +51,8 @@ public class PreorderActivity extends Activity {
     private int minuteSelected;
     private int hour_now;
     private int minute_now;
+    private int minute_preset;
+    private int hour_preset;
     private Context context;
     private int hour_start;
     private int hour_end;
@@ -57,10 +60,19 @@ public class PreorderActivity extends Activity {
     private int minute_end;
     private int time_interval=-1;
     private String time_now;
+    private String time_preset;
     private String key="preorder_interval";
     private ImageView background;
     private ImageView boader;
     private ImageView background2;
+    private User user;
+    private String user_account;
+    boolean in_use=false;
+    boolean breakdown=false;
+    boolean in_order=false;
+    boolean user_in_preorder=false;
+    boolean user_in_use=false;
+    PreorderHelp prehelp=PreorderHelp.getPreorderHelp();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +91,8 @@ public class PreorderActivity extends Activity {
         boader=(ImageView)findViewById(R.id.imageView8);
         background2=(ImageView)findViewById(R.id.imageView9);
         context=this;
-
+        user=User.getUser();
+        user_account=user.getAccount();
         /**
          * 获取当前系统时间
          */
@@ -93,9 +106,27 @@ public class PreorderActivity extends Activity {
             time_now = "" + hour_now + ":" +"0"+ minute_now;
         }
         time_from_now.setText(time_now);
-        time_to.setText(time_now);
+
         minute_start=minute_now;
         hour_start=hour_now;
+        if ((minute_now+10)>=60){
+            hour_preset=hour_now+1;
+            minute_preset=(minute_now+10)-60;
+        }else{
+            hour_preset=hour_now;
+            minute_preset=minute_now+10;
+        }
+        Log.d("PreorderActivity", "minute now is :" + minute_now);
+        Log.d("PreorderActivity", "minute preset is :" + minute_preset);
+
+        if (minute_preset>=10) {
+            time_preset = "" + hour_preset + ":" + minute_preset;
+        }else{
+            time_preset = "" + hour_preset + ":" +"0"+ minute_preset;
+        }
+        time_to.setText(time_preset);
+
+        time_interval = (hour_preset - hour_start) * 60 + (minute_preset - minute_start);
         /**
          * 选择时间
          */
@@ -128,12 +159,9 @@ public class PreorderActivity extends Activity {
                         minute_end = minute;
                         hour_end = hourOfDay;
                         Log.d("PreorderActivity", "minute picked from time to is :" + minute);
-                        //如果选择了下一个小时：
-                        if (minute_end < minute_start) {
-                            minute_end += 60;
-                        }
+
                         //如果时间选择超前了
-                        if (hour_end <= hour_start && minute_end < minute_start) {
+                        if ((hour_end == hour_start && minute_end < minute_start)||(hour_end<hour_start)) {
                             Toast.makeText(context, "不可以超前哦", Toast.LENGTH_SHORT).show();
                             hour_end = hour_start;
                             minute_end = minute_start;
@@ -152,15 +180,15 @@ public class PreorderActivity extends Activity {
                             }else {//预约时间在15分钟之内
 
                                 //排版显示时间
-                                if (minute < 10) {
-                                    time_to.setText("" + hour_end + ":" + "0" + minute);
+                                if (minute_end < 10) {
+                                    time_to.setText("" + hour_end + ":" + "0" + minute_end);
                                 } else {
-                                    time_to.setText("" + hour_end + ":" + minute);
+                                    time_to.setText("" + hour_end + ":" + minute_end);
                                 }
                             }
                         }
                     }
-                },hour_now,minute_now,true).show();
+                },hour_preset,minute_preset,true).show();
 
             }
         });
@@ -192,9 +220,12 @@ public class PreorderActivity extends Activity {
             public void onClick(View v) {
 
                 //与服务器同步……
+                prehelp=PreorderHelp.getPreorderHelp();
+                prehelp.setPreorder_bike_id(bicycle_ID);
                 String preorder_url="http://123.206.80.243:8080/sharing_bicycle/preorder.do?";
                 List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
                 params.add(new BasicNameValuePair("bike_id",bicycle_ID));
+                params.add(new BasicNameValuePair("user_id",user_account));
                 Handler handler = new Handler(){
                     @Override
                     public void handleMessage(Message msg) {
@@ -207,10 +238,32 @@ public class PreorderActivity extends Activity {
                                 if(flag)
                                 {
                                     Toast.makeText(PreorderActivity.this,"预约成功",Toast.LENGTH_SHORT).show();
+
+                                    if (time_interval!=-1){
+                                        //PreorderActivity要返回MainActivity的时候，只能用finish（）结束当前Activity，不能用startActivity（）方法
+                                        prehelp=PreorderHelp.getPreorderHelp();
+                                        prehelp.setTime_interval_help(time_interval*60);
+                                        Intent intent=new Intent(context,MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 }
                                 else {
                                     Toast.makeText(PreorderActivity.this,"预约失败",Toast.LENGTH_SHORT).show();
                                     time_interval=-1;
+                                    in_use=json.getBoolean("in_use");
+                                    breakdown=json.getBoolean("break_down");
+                                    in_order=json.getBoolean("in_order");
+                                    user_in_preorder=json.getBoolean("user_in_preorder");
+                                    user_in_use=json.getBoolean("user_in_use");
+
+                                    if (breakdown)
+                                        Toast.makeText(PreorderActivity.this,"该车辆已经损坏，请选择另外车辆",Toast.LENGTH_SHORT).show();
+                                    if (user_in_preorder)
+                                        Toast.makeText(PreorderActivity.this,"您已经有预约的车辆了",Toast.LENGTH_SHORT).show();
+                                    if (user_in_use)
+                                        Toast.makeText(PreorderActivity.this,"您已经在使用车辆，不能预约车辆",Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(PreorderActivity.this,"您不能预约多辆车！",Toast.LENGTH_SHORT).show();
                                 }
                                 break;
                             default:
@@ -219,16 +272,8 @@ public class PreorderActivity extends Activity {
                     }
                 };
                 NetUtils.postRequest(preorder_url,params,handler);
-                if (time_interval!=-1){
-                    Intent intent=getIntent();
-                    Bundle mybundle=new Bundle();
-                    mybundle.putInt(key,time_interval);
-                    intent.putExtras(mybundle);
-                    setResult(1,intent);
-                    intent.setClass(context,MainActivity.class);
-                    //startActivity(intent);
-                    finish();
-                }
+
+
 
             }
         });
@@ -243,6 +288,10 @@ public class PreorderActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        ReleaseImageViewUtils.releaseImage(background);
+        ReleaseImageViewUtils.releaseImage(background2);
+        ReleaseImageViewUtils.releaseImage(boader);
+
         ImageViewUtils.releaseImageViewResouce(background);
         ImageViewUtils.releaseImageViewResouce(background2);
         ImageViewUtils.releaseImageViewResouce(boader);

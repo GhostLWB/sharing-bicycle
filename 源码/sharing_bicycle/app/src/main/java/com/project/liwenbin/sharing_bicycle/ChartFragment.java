@@ -1,5 +1,6 @@
 package com.project.liwenbin.sharing_bicycle;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +31,32 @@ public class ChartFragment extends Fragment {
     private CreditFragment creditFragment;
     private GetCreditFragment getCreditFragment;
     private WeeklyFragment weeklyFragment;
+    private ImageButton analysis_back;
+    private ImageView chartBackground;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chart_layout, container, false);
-
+        analysis_back=(ImageButton)view.findViewById(R.id.analysis_back_button);
+        chartBackground=(ImageView)view.findViewById(R.id.imageView18);
         initControls(view);
 
+        analysis_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent anaIntent=new Intent(getActivity(),MainActivity.class);
+                startActivity(anaIntent);
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        ReleaseImageViewUtils.releaseImage(chartBackground);
+        ImageViewUtils.releaseImageViewResouce(chartBackground);
+        super.onDestroy();
     }
 
     /**
@@ -88,4 +109,5 @@ public class ChartFragment extends Fragment {
         chartTabLayout.setupWithViewPager(chart_viewPager);
         //chartTabLayout.set
     }
+
 }

@@ -13,6 +13,8 @@ public class Bicycle {
     String description;
     boolean isOrder;
     boolean isLock;
+    String user_preorder;
+    String user_inuse;
     public Bicycle(int init_bike_id,LatLng init_location,boolean init_in_use ,
                    boolean init_isBreakedown,String init_description,boolean init_isOrder,boolean init_isLock ){
         this.bike_id=init_bike_id;
@@ -86,6 +88,30 @@ public class Bicycle {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getId_preorder() {
+        return user_preorder;
+    }
+
+    public void setId_preorder(String id_preorder) {
+        this.user_preorder = id_preorder;
+    }
+
+    public String getUser_inuse() {
+        return user_inuse;
+    }
+
+    public String getUser_preorder() {
+        return user_preorder;
+    }
+
+    public void setUser_preorder(String user_preorder) {
+        this.user_preorder = user_preorder;
+    }
+
+    public void setUser_inuse(String user_inuse) {
+        this.user_inuse = user_inuse;
     }
 
     @Override
