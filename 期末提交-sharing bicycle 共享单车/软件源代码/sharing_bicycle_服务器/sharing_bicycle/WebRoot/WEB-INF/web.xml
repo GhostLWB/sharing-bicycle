@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+  <display-name></display-name>	
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <resource-ref>
+  <description>MysqlCon</description>
+  <res-ref-name>jdbc/sample</res-ref-name>
+  <res-type>javax.sql.DataSource</res-type>
+  <res-auth>Container</res-auth>
+  </resource-ref>
+  
+  <!-- User_password_servlet mapping  user.do -->
+  <servlet>
+  <servlet-name>user_passwd</servlet-name>
+  <servlet-class>com.demo.User_password_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>user_passwd</servlet-name>
+  <url-pattern>/user.do</url-pattern>
+  </servlet-mapping>
+  <servlet>
+  
+  <!-- User_register_servlet mapping  register.do -->
+  <servlet-name>user_register</servlet-name>
+  <servlet-class>com.demo.User_register_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>user_register</servlet-name>
+  <url-pattern>/register.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Bike_full_data mapping  -->
+  <servlet>
+  <servlet-name>bike_full</servlet-name>
+  <servlet-class>com.demo.Bike_full_data_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>bike_full</servlet-name>
+  <url-pattern>/bike_full</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Wallet_credit_total mapping -->
+  <servlet>
+  <servlet-name>Wallet_credit_total</servlet-name>
+  <servlet-class>com.demo.Wallet_credit_total_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Wallet_credit_total</servlet-name>
+  <url-pattern>/wallet_credit.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Bike_modify mapping -->
+  <servlet>
+  <servlet-name>Bike_modify</servlet-name>
+  <servlet-class>com.demo.Bike_modify_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Bike_modify</servlet-name>
+  <url-pattern>/bike_modify.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Get_single_bike mapping -->
+  <servlet>
+  <servlet-name>Get_single_bike</servlet-name>
+  <servlet-class>com.demo.Get_single_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Get_single_bike</servlet-name>
+  <url-pattern>/single_bike.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Preorder_bike mapping -->
+  <servlet>
+  <servlet-name>Preorder_bike</servlet-name>
+  <servlet-class>com.demo.Preorder_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Preorder_bike</servlet-name>
+  <url-pattern>/preorder.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Finish_preorder mapping -->
+  <servlet>
+  <servlet-name>Finish_preorder</servlet-name>
+  <servlet-class>com.demo.Finish_preorder_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Finish_preorder</servlet-name>
+  <url-pattern>/finish_preorder.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Use_bike mapping -->
+  <servlet>
+  <servlet-name>Use_bike</servlet-name>
+  <servlet-class>com.demo.Use_bike_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Use_bike</servlet-name>
+  <url-pattern>/use_bike.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Finish_use mapping -->
+  <servlet>
+  <servlet-name>Finish_use</servlet-name>
+  <servlet-class>com.demo.Finish_use_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Finish_use</servlet-name>
+  <url-pattern>/finish_use.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Fault_report mapping -->
+  <servlet>
+  <servlet-name>Fault_report</servlet-name>
+  <servlet-class>com.demo.Fault_report_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Fault_report</servlet-name>
+  <url-pattern>/report.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Credit_record mapping -->
+  <servlet>
+  <servlet-name>Credit_record</servlet-name>
+  <servlet-class>com.demo.Credit_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Credit_record</servlet-name>
+  <url-pattern>/credit_record.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Cycling_record mapping -->
+  <servlet>
+  <servlet-name>Cycling_record</servlet-name>
+  <servlet-class>com.demo.Cycling_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Cycling_record</servlet-name>
+  <url-pattern>/cycling_record.do</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Wallet_record mapping -->
+  <servlet>
+  <servlet-name>Wallet_record</servlet-name>
+  <servlet-class>com.demo.Wallet_record_servlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>Wallet_record</servlet-name>
+  <url-pattern>/wallet_record.do</url-pattern>
+  </servlet-mapping>
+</web-app>
